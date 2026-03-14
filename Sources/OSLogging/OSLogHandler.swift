@@ -2,12 +2,48 @@ import Foundation
 import Logging
 import os
 
+/// `LogHandler` implementation that sends logs to Apple's
+/// [os log](https://developer.apple.com/documentation/os) system.
+///
+/// > Note:
+/// > There are seven levels in swift-log, and five in os log. These are
+/// > converted in the following way:
+/// >
+/// > swift-log | os log
+/// > ----------|--------
+/// > trace     | debug
+/// > debug     | debug
+/// > info      | info
+/// > notice    | default
+/// > warning   | default
+/// > error     | error
+/// > critical  | fault
 public struct OSLogHandler: Logging.LogHandler {
 
   private let logger: os.Logger
   public var metadata: Logging.Logger.Metadata = [:]
   public var logLevel: Logging.Logger.Level = .info
 
+  /// Creates a log handler.
+  ///
+  /// Typically, you will want to create this in the builder of
+  /// `LoggingSystem.bootstrap` early in your application lifecycle.
+  ///
+  /// Use the label provided in the builder as the category:
+  ///
+  /// ```swift
+  /// LoggingSystem.bootstrap { label in
+  ///   OSLogHandler(subsystem: "your.subsystem.name", category: label)
+  /// }
+  /// ```
+  ///
+  /// - Parameters:
+  ///   - subsystem: String that identifies the subsystem that emits
+  ///                signposts. Typically, you use the same value as your app’s
+  ///                bundle ID.
+  ///   - category: String that the system uses to categorize emitted signposts.
+  ///               This should typically be the label provided by the swift log
+  ///               logging system.
   public init(subsystem: String, category: String) {
     logger = os.Logger(subsystem: subsystem, category: category)
   }
