@@ -1,26 +1,36 @@
 // swift-tools-version: 6.2
-// The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
-    name: "swift-oslog",
-    products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
-        .library(
-            name: "swift-oslog",
-            targets: ["swift-oslog"]
-        ),
-    ],
-    targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
-        .target(
-            name: "swift-oslog"
-        ),
-        .testTarget(
-            name: "swift-oslogTests",
-            dependencies: ["swift-oslog"]
-        ),
-    ]
+  name: "swift-oslog",
+  platforms: [
+    .iOS(.v18),
+    .macOS(.v15),
+    .tvOS(.v18),
+    .watchOS(.v11),
+  ],
+  products: [
+    .library(name: "OSLogging", targets: ["OSLogging"]),
+  ],
+  dependencies: [
+    .package(url: "https://github.com/apple/swift-log.git", from: "1.10.0"),
+  ],
+  targets: [
+
+    .target(
+      name: "OSLogging",
+      dependencies: [
+        .product(name: "Logging", package: "swift-log"),
+      ]
+    ),
+
+    .testTarget(
+      name: "OSLoggingTests",
+      dependencies: [
+        "OSLogging",
+        .product(name: "Logging", package: "swift-log"),
+      ]
+    ),
+  ]
 )
